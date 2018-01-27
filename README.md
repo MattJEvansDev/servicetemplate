@@ -11,6 +11,7 @@ As well as making it quicker for you to get up and running with your service. It
 ### Prerequisites
 * Docker is installed on your local box
 * You are running JDK 1.8 or above
+* Branches have been setup with GitFlow https://github.com/nvie/gitflow
 
 ## Things to change
 Like I said, this is a template, it uses the example of a voting service (because I wanted to test something in spring data's page library).
@@ -73,3 +74,12 @@ docker run --name test-instance -p 8083:8083  voteservice
 
 To test the deployment go to:
 Go to http://localhost:8083/vote/last , expected outcome "1"
+
+## License
+This project uses the MIT License, please see License.md for a copy
+
+
+## Acknowledgements
+Thanks to Sam Newman for his work on Microservices and  Michael Nygard for his book Release it!
+If you read two books this year, read Sam and Michael's!
+
