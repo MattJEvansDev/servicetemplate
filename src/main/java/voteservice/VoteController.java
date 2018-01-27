@@ -89,27 +89,5 @@ public class VoteController {
     private boolean pageValuesContainsResults(Pageable pageRequest, int offset) {
         return offset <= PAGE_VALUES.size() - pageRequest.getPageSize();
     }
-
-
-//    @RequestMapping(method = RequestMethod.POST, value = "/")
-//    public ResponseEntity<ServerStatus> addServerStatus(@RequestBody ServerStatus serverStatus, UriComponentsBuilder ucBuilder) {
-//
-//        ServerStatus status = null;
-//        boolean statusExists = false;
-//        try {
-//            ServerStatus existingStatus = statusRepository.findOne(serverStatus.getServerName());
-//            status = statusRepository.save(serverStatus);
-//            statusExists = existingStatus == null ? false : true;
-//
-//        } catch (Exception e) {
-//            LOG.info("Something went wrong, woaahhh" + e.getStackTrace());
-//            return new ResponseEntity<ServerStatus>(HttpStatus.INTERNAL_SERVER_ERROR);
-//
-//        }
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setLocation(ucBuilder.path("/{id}").buildAndExpand(serverStatus.getServerName()).toUri());
-//
-//        HttpStatus resultantStatus = statusExists ? HttpStatus.NO_CONTENT : HttpStatus.CREATED;
-//        return new ResponseEntity<ServerStatus>(headers, resultantStatus);
-//    }
+    
 }
