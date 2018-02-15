@@ -12,74 +12,53 @@ As well as making it quicker for you to get up and running with your service. It
 * Docker is installed on your local box
 * You are running JDK 1.8 or above
 * Branches have been setup with GitFlow https://github.com/nvie/gitflow
+* This project uses gradle wrapper
 
-## Things to change
+## Information on the webservice example
 Like I said, this is a template, it uses the example of a voting service (because I wanted to test something in spring data's page library).
 It exposes a rest endpoint that lets you get the last vote, or a paginated list of votes.
 
 Please note; I wouldn't advise using PageImpl in the way that used here.
 The "totalElements" and "totalPages" methods do not always give the correct results when implemented this way. Please see See https://jira.spring.io/browse/DATACMNS-798
 
-### build.gradle
-Change the baseName value from "voteservice" to "nameofmyservice"
-Change the version value from "0.1.0" to "X.Y.Z"
+In reality you'll be writing your own web services anyway!
 
-### Dockerfile
-Change the line
-```
-ADD build/libs/voteservice-0.1.0.jar voteservice-app.jar
-```
-to
-```
-ADD build/libs/nameofmyservice-X.Y.Z.jar nameofmyservice-app.jar
-```
-Change the line
-```
-RUN bash -c 'touch /voteservice-app.jar'
-```
-to
-```
-RUN bash -c 'touch /nameofmyservice-app.jar'
-```
-Change the line
-```
-ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/voteservice-app.jar"]
-```
-to
-```
-ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/nameofmyservice-app.jar"]
-```
 
 ## Deployment instructions
-This assumes you're in the root directory (the one with the Dockerfile).
+This project allows you to specify a version and name through a gradle task.
+This means you currently don't need to change any config files.
+
+It's as simple as running the following command 
 
  Build the Jar
 ```
-./gradlew build
+./gradlew clean build -PserviceName=testService -PserviceVersion=0.1.2  docker 
 ```
- Remove any existing containers
-```
-docker rm test-instance
-```
+Simply change -PserviceName and -PserviceVersion as appropriate
+To check your images exists, you can run 
 
- build the voteservice image
 ```
-docker build -t voteservice .
-```
-
-Start a Docker container
-```
-docker run --name test-instance -p 8083:8083  voteservice
+docker images
 ```
 
 To test the deployment go to:
 Go to http://localhost:8083/vote/last , expected outcome "1"
 
+## Notes
+ * As it stands, the gradle wrapper files have been added into the repostiory. 
+ Although this is not ideal, there's a problem when running "gradle wrapper" and
+ using the docker plugin. I'm not sure whether this is my configuration or the plugin
+ so I will continue to investigate it's use before raising an issue.
+
 ## License
-This project uses the MIT License, please see License.md for a copy
+This project uses the Apache 2.0 License, please see LICENSE.md for a copy
+
+For information on opensource projects that are have been used, please check OPENSOURCE-LICENSES.md
 
 
 ## Acknowledgements
 Thanks to Sam Newman for his work on Microservices and  Michael Nygard for his book Release it!
 If you read two books this year, read Sam and Michael's!
+
+Thanks to Palantir Technologies for there Docker gradle plugin work - https://github.com/palantir/gradle-docker
 

@@ -1,22 +1,28 @@
 buildscript {
     repositories {
-        mavenCentral()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
     }
     dependencies {
-        classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.4.0.RELEASE'
-
-
-
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:1.5.10.RELEASE"
+        classpath "gradle.plugin.com.palantir.gradle.docker:gradle-docker:0.18.0"
     }
 }
 
-apply plugin: 'java'
-apply plugin: 'spring-boot'
+plugins {
+    id  'java'
+    id 'org.springframework.boot' version '1.5.10.RELEASE'
+    id 'com.palantir.docker' version '0.18.0'
+}
+
+
+
 
 
 jar {
-    baseName = 'voteservice'
-    version =  '0.1.0'
+    baseName = 'service'
+    version = '0.1.0'
 }
 
 repositories {
@@ -41,3 +47,56 @@ dependencies {
 task wrapper(type: Wrapper) {
     gradleVersion = '4.0'
 }
+
+task initialiseParameters {
+
+
+    if(project.hasProperty('serviceName')){
+        println "Creating Jar with name "+ serviceName.toLowerCase();
+        jar.setProperty('baseName',serviceName.toLowerCase());
+    }else{
+        println "Using default name of "+ jar['baseName'];
+    }
+
+
+    if(project.hasProperty('serviceVersion')){
+        println "Creating Jar with version "+ serviceVersion;
+        jar.setProperty('version',serviceVersion);
+    }else{
+        println "Using default version of " + ":" + jar['version'];
+    }
+
+    build.dependsOn initialiseParameters;
+
+
+
+}
+
+docker {
+
+    String buildName = jar.getProperties()['baseName'].toString().toLowerCase();
+    String buildVersion = jar.getProperties()['version'];
+
+    // Although this is specified within the Docker file, the gradle plugin states it as a mandatory field.
+    // Docker file will override this
+    String dockerNameAndVersion = buildName + "/" +buildVersion;
+    name  dockerNameAndVersion
+
+    String executablesToPackage = "build/libs/"+buildName+"-"+buildVersion + ".jar";
+    files executablesToPackage
+
+    dockerfile file('DockerFile')
+    buildArgs([
+            BUILD_NAME: buildName,
+            BUILD_VERSION:buildVersion
+    ])
+
+    tags buildVersion
+
+}
+
+
+
+
+
+

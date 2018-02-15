@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Created by matt on 31/07/2016.
+ * Created by Matt on 26/01/2018.
  */
 @RestController
 @RequestMapping("/vote")
@@ -39,13 +39,13 @@ public class VoteController {
     public ResponseEntity<Page<Integer>> fetchPaginated(
             @PathVariable int numberOfResultsPerPage, @PathVariable int pageNumber) {
 
-        Page<Integer> p = null;
         HttpStatus httpStatusCode = HttpStatus.OK;
         if (numberOfResultsPerPage > 5) {
             numberOfResultsPerPage = 5;
             LOG.trace("Limited request to 5 results per page");
             httpStatusCode = HttpStatus.PARTIAL_CONTENT;
         }
+
         Pageable pageRequest;
         if (numberOfResultsPerPage == 0 || queryResultsInOverflow(pageNumber, numberOfResultsPerPage)) {
             return createEmptyPage();
@@ -89,5 +89,5 @@ public class VoteController {
     private boolean pageValuesContainsResults(Pageable pageRequest, int offset) {
         return offset <= PAGE_VALUES.size() - pageRequest.getPageSize();
     }
-    
+
 }
