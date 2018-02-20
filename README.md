@@ -5,7 +5,7 @@ The concept is taken from Sam Newman's "Building Microservices".
 As well as making it quicker for you to get up and running with your service. It also aims to provide:
 * A common approach to logging - **TODO**
 * A common approach to authentication - **TODO**
-* A common approach to metrics - **TODO**
+* A common approach to metrics 
 * Anything else useful that is not domain specific !
 
 ### Prerequisites
@@ -23,22 +23,59 @@ The "totalElements" and "totalPages" methods do not always give the correct resu
 
 In reality you'll be writing your own web services anyway!
 
+## Metrics
+To allow consistency across Microservices (regardless of implementation language), metrics are exposed over
+a restful url taking the following format:
+```
+localhost:8083/manage/{id} 
+```
+A service template implementation for a second language should follow the same url, regardless to what metrics it 
+chooses to expose (i.e. JVM Heap size is not applicable in C#).
+
+Spring Actuator is used to generate pull standard Java metrics from the app. This handy library exposes metrics at 
+a snapshot in time over restful endpoints. The metrics are exposed over 
+
+For example 
+```
+localhost:8083/manage/info
+localhost:8083/manage/metrics
+localhost:8083/manage/env 
+```
+For more information on Spring Actuator endpoints, see 
+https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-endpoints.html
+
+**Note** Certain Actuator endpoints require authentication (e.g. /metrics) so credentials have been defined in 
+application.properties. In reality, you probably wouldn't store these credentials here! 
+
+An example of a custom end point has been defined to illustrate how to capture service specific metrics 
+```
+localhost:8083/manage/exampleEndpoint 
+```
+
+Tools such as Prometheus can be used to get metrics from a container level and make use of the information exposed at 
+these endpoints. 
 
 ## Deployment instructions
-This project allows you to specify a version and name through a gradle task.
+This project allows you to specify a version through a gradle task.
 This means you currently don't need to change any config files.
+The name of the service is derived from the project name. 
 
 It's as simple as running the following command 
 
  Build the Jar
 ```
-./gradlew clean build -PserviceName=testService -PserviceVersion=0.1.2  docker 
+./gradlew clean build -PserviceVersion=0.1.2  docker 
 ```
-Simply change -PserviceName and -PserviceVersion as appropriate
+Simply change -PserviceVersion as appropriate
 To check your images exists, you can run 
 
 ```
 docker images
+```
+
+To run your docker image:
+```
+docker run --name test-instance -p 8083:8083 -d servicetemplate/0.1.2
 ```
 
 To test the deployment go to:

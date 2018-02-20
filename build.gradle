@@ -14,16 +14,25 @@ plugins {
     id  'java'
     id 'org.springframework.boot' version '1.5.10.RELEASE'
     id 'com.palantir.docker' version '0.18.0'
+
 }
 
-
-
-
+version='0.1.2'
+description='This is a default description; it should be changed!!!!'
 
 jar {
-    baseName = 'service'
-    version = '0.1.0'
+    baseName = project.name.toLowerCase()
+    version = project.version
 }
+
+// Taken from https://stackoverflow.com/questions/33043866/referencing-gradle-properties-in-application-yml 15/02/18
+processResources {
+    filesMatching("**/application.properties") {
+        expand( project.properties )
+    }
+}
+// End snippet
+
 
 repositories {
     mavenCentral()
@@ -37,12 +46,11 @@ dependencies {
     compile "org.springframework.boot:spring-boot-starter-actuator"
     compile "org.springframework.boot:spring-boot-starter-web"
     compile "org.springframework.data:spring-data-jpa:2.0.3.RELEASE"
+    compile"org.springframework.boot:spring-boot-starter-security"
 
     testCompile("junit:junit")
 
-
 }
-
 
 task wrapper(type: Wrapper) {
     gradleVersion = '4.0'
@@ -50,39 +58,28 @@ task wrapper(type: Wrapper) {
 
 task initialiseParameters {
 
-
-    if(project.hasProperty('serviceName')){
-        println "Creating Jar with name "+ serviceName.toLowerCase();
-        jar.setProperty('baseName',serviceName.toLowerCase());
-    }else{
-        println "Using default name of "+ jar['baseName'];
-    }
-
-
     if(project.hasProperty('serviceVersion')){
-        println "Creating Jar with version "+ serviceVersion;
-        jar.setProperty('version',serviceVersion);
+        println "Creating Jar with version "+ serviceVersion
+        jar.setProperty('version',serviceVersion)
     }else{
-        println "Using default version of " + ":" + jar['version'];
+        println "Using default version of " + ":" + jar['version']
     }
 
-    build.dependsOn initialiseParameters;
-
-
+    build.dependsOn initialiseParameters
 
 }
 
 docker {
 
-    String buildName = jar.getProperties()['baseName'].toString().toLowerCase();
-    String buildVersion = jar.getProperties()['version'];
+    String buildName = jar.getProperties()['baseName'].toString().toLowerCase()
+    String buildVersion = jar.getProperties()['version']
 
     // Although this is specified within the Docker file, the gradle plugin states it as a mandatory field.
     // Docker file will override this
-    String dockerNameAndVersion = buildName + "/" +buildVersion;
+    String dockerNameAndVersion = buildName + "/" +buildVersion
     name  dockerNameAndVersion
 
-    String executablesToPackage = "build/libs/"+buildName+"-"+buildVersion + ".jar";
+    String executablesToPackage = "build/libs/"+buildName+"-"+buildVersion + ".jar"
     files executablesToPackage
 
     dockerfile file('DockerFile')
@@ -92,11 +89,6 @@ docker {
     ])
 
     tags buildVersion
+    noCache true
 
 }
-
-
-
-
-
-
