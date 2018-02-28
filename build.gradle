@@ -25,15 +25,11 @@ jar {
     version = project.version
 }
 
-// Taken from https://stackoverflow.com/questions/33043866/referencing-gradle-properties-in-application-yml 15/02/18
 processResources {
     filesMatching("**/application.properties") {
-        expand( project.properties )
+    expand(project.properties)
     }
 }
-// End snippet
-
-
 repositories {
     mavenCentral()
 }
@@ -41,12 +37,12 @@ repositories {
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-
 dependencies {
     compile "org.springframework.boot:spring-boot-starter-actuator"
     compile "org.springframework.boot:spring-boot-starter-web"
     compile "org.springframework.data:spring-data-jpa:2.0.3.RELEASE"
     compile"org.springframework.boot:spring-boot-starter-security"
+    compile"org.springframework.cloud:spring-cloud-starter-sleuth:1.2.4.RELEASE"
 
     testCompile("junit:junit")
 
@@ -61,6 +57,7 @@ task initialiseParameters {
     if(project.hasProperty('serviceVersion')){
         println "Creating Jar with version "+ serviceVersion
         jar.setProperty('version',serviceVersion)
+        project.version = serviceVersion
     }else{
         println "Using default version of " + ":" + jar['version']
     }
@@ -73,6 +70,8 @@ docker {
 
     String buildName = jar.getProperties()['baseName'].toString().toLowerCase()
     String buildVersion = jar.getProperties()['version']
+
+    System.out.println("Docker is using version " +buildVersion);
 
     // Although this is specified within the Docker file, the gradle plugin states it as a mandatory field.
     // Docker file will override this
