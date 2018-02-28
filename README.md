@@ -3,7 +3,7 @@ This project acts as a service template to build Java based Microservices from.
 The concept is taken from Sam Newman's "Building Microservices".
 
 As well as making it quicker for you to get up and running with your service. It also aims to provide:
-* A common approach to logging - **TODO**
+* A common approach to logging 
 * A common approach to authentication - **TODO**
 * A common approach to metrics 
 * Anything else useful that is not domain specific !
@@ -14,14 +14,26 @@ As well as making it quicker for you to get up and running with your service. It
 * Branches have been setup with GitFlow https://github.com/nvie/gitflow
 * This project uses gradle wrapper
 
-## Information on the webservice example
-Like I said, this is a template, it uses the example of a voting service (because I wanted to test something in spring data's page library).
-It exposes a rest endpoint that lets you get the last vote, or a paginated list of votes.
+## Logging
 
-Please note; I wouldn't advise using PageImpl in the way that used here.
-The "totalElements" and "totalPages" methods do not always give the correct results when implemented this way. Please see See https://jira.spring.io/browse/DATACMNS-798
+This template uses Logback to configure logging. 
 
-In reality you'll be writing your own web services anyway!
+The app exoses two example endpoints, one returning a result with no further calls (vote/last)
+and one that calls an external webservice (/word/random).
+
+The purpose of the /word/random service call is to illustrate log ID correlation.
+To test log correlation:
+ 1) Clone this project once
+ 2) Clone again, but this time create an endpoint /word/random that returns a string.
+ 3) Update your second project to run on port 8084
+ 4) Run the first project via the ./gradlew bootRun command
+ 5) Run the second project (/word/random endpoint) using Docker
+ 6) go to localhost:8083/vote/downstream
+ 7) checkout the logs and notice the id is passed between the different services
+ 
+Note: The reason we have to run the calling service outside a Docker container is so that it can
+talk to the docker container through localhost. In reality this would be a real URL!
+
 
 ## Metrics
 To allow consistency across Microservices (regardless of implementation language), metrics are exposed over

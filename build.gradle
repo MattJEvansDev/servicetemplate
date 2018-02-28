@@ -17,9 +17,6 @@ plugins {
 
 }
 
-version='0.1.2'
-description='This is a default description; it should be changed!!!!'
-
 jar {
     baseName = project.name.toLowerCase()
     version = project.version
@@ -81,10 +78,12 @@ docker {
     String executablesToPackage = "build/libs/"+buildName+"-"+buildVersion + ".jar"
     files executablesToPackage
 
+
     dockerfile file('DockerFile')
     buildArgs([
             BUILD_NAME: buildName,
-            BUILD_VERSION:buildVersion
+            BUILD_VERSION:buildVersion,
+            PORT:project.port
     ])
 
     tags buildVersion
