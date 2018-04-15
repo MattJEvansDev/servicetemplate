@@ -1,4 +1,4 @@
-package manage;
+package voteservice.manage;
 
 import org.springframework.boot.actuate.endpoint.Endpoint;
 import org.springframework.stereotype.Component;

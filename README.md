@@ -3,7 +3,9 @@ This project acts as a service template to build Java based Microservices from.
 The concept is taken from Sam Newman's "Building Microservices".
 
 As well as making it quicker for you to get up and running with your service. It also aims to provide:
+* A common approach to inter-service communication
 * A common approach to logging 
+* A default fallback strategy for external calls - **TODO**
 * A common approach to authentication - **TODO**
 * A common approach to metrics 
 * Anything else useful that is not domain specific !
@@ -13,26 +15,43 @@ As well as making it quicker for you to get up and running with your service. It
 * You are running JDK 1.8 or above
 * Branches have been setup with GitFlow https://github.com/nvie/gitflow
 * This project uses gradle wrapper
+* A Euerka Server (See below)
+
+## Service Discovery
+This project uses [Netflix's Eureka](https://github.com/Netflix/eureka) as a service discovery tool.
+You can set up your own Eureka server, or to make things a little easier, clone [an example server](https://github.com/MattJEvansDev/eurekaServerExample).
+
+
+## Inter-Service Communication
+A Eureka server is used as the service discovery mechanism in the project. For those new to service discovery, 
+think of it as a DNS. You register with a discovery server if you're expose a service, 
+and you ask for information on services if you're a client (yes, you can be a service and a client).
+
+The @EnableDiscoveryClient annotation is used to register this service with the Eureka server.
+There are two ways to get service information from the server:
+ 1) Using the getWordService() method VoteController to manually fetch information from the server
+ 2) Using the Netflix Feign Client ; by implementing the @FeignClient interface, services are evaluated at run time. 
 
 ## Logging
 
 This template uses Logback to configure logging. 
 
-The app exoses two example endpoints, one returning a result with no further calls (vote/last)
+The app exposes two example endpoints, one returning a result with no further calls (vote/last)
 and one that calls an external webservice (/word/random).
 
 The purpose of the /word/random service call is to illustrate log ID correlation.
 To test log correlation:
- 1) Clone this project once
- 2) Clone again, but this time create an endpoint /word/random that returns a string.
- 3) Update your second project to run on port 8084
- 4) Run the first project via the ./gradlew bootRun command
- 5) Run the second project (/word/random endpoint) using Docker
- 6) go to localhost:8083/vote/downstream
- 7) checkout the logs and notice the id is passed between the different services
+ 1) Clone this project
+ 2) Clone [the example Microservice](https://github.com/MattJEvansDev/wordservice)
+ 3) Clone [the example Eureka server](https://github.com/MattJEvansDev/eurekaServerExample).
+ 4) Start the Eureka Server
+ 5) Start the example Microservice using ./gradlew bootRun
+ 6) Start this project using ./gradlew bootRun
+ 7) go to localhost:8083/vote/downstream
+ 8) checkout the logs and notice the id is passed between the different services
  
-Note: The reason we have to run the calling service outside a Docker container is so that it can
-talk to the docker container through localhost. In reality this would be a real URL!
+Note: The reason we have to run the services outside of Docker  is so that it can
+talk to the docker container through localhost. This will be addressed in future.
 
 
 ## Metrics
@@ -111,3 +130,4 @@ If you read two books this year, read Sam and Michael's!
 
 Thanks to Palantir Technologies for there Docker gradle plugin work - https://github.com/palantir/gradle-docker
 
+Thanks to all the Open Source projects and contributors that've helped !

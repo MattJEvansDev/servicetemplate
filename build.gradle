@@ -23,7 +23,7 @@ jar {
 }
 
 processResources {
-    filesMatching("**/application.properties") {
+    filesMatching("**/*.properties") {
     expand(project.properties)
     }
 }
@@ -38,8 +38,12 @@ dependencies {
     compile "org.springframework.boot:spring-boot-starter-actuator"
     compile "org.springframework.boot:spring-boot-starter-web"
     compile "org.springframework.data:spring-data-jpa:2.0.3.RELEASE"
-    compile"org.springframework.boot:spring-boot-starter-security"
-    compile"org.springframework.cloud:spring-cloud-starter-sleuth:1.2.4.RELEASE"
+    compile "org.springframework.boot:spring-boot-starter-security"
+    compile "org.springframework.cloud:spring-cloud-starter-sleuth:1.2.4.RELEASE"
+    compile "org.springframework.cloud:spring-cloud-starter-zipkin:1.3.2.RELEASE"
+    compile "org.springframework.cloud:spring-cloud-starter-feign:1.4.4.RELEASE"
+    compile "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:1.4.3.RELEASE"
+
 
     testCompile("junit:junit")
 
