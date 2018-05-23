@@ -14,8 +14,11 @@ plugins {
     id  'java'
     id 'org.springframework.boot' version '1.5.10.RELEASE'
     id 'com.palantir.docker' version '0.18.0'
+    id "com.github.hierynomus.license" version "0.14.0"
+
 
 }
+
 
 jar {
     baseName = project.name.toLowerCase()
@@ -44,7 +47,6 @@ dependencies {
     compile "org.springframework.cloud:spring-cloud-starter-feign:1.4.4.RELEASE"
     compile "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:1.4.3.RELEASE"
 
-
     testCompile("junit:junit")
 
 }
@@ -67,17 +69,37 @@ task initialiseParameters {
 
 }
 
+license {
+
+
+    header rootProject.file('LICENSE-COPYRIGHT.md')
+    excludes(["**/*.xml", "**/*.properties"])
+    //ignoreFailures = true;
+
+}
+
+downloadLicenses {
+    ext.apacheTwo = license('Apache License, Version 2.0', 'http://opensource.org/licenses/Apache-2.0')
+
+    aliases = [
+            (apacheTwo) : ['The Apache Software License, Version 2.0', 'Apache 2', 'Apache License Version 2.0', 'Apache License, Version 2.0', 'Apache License 2.0', license('Apache License', 'http://www.apache.org/licenses/LICENSE-2.0')]
+    ]
+
+    includeProjectDependencies = true;
+    dependencyConfiguration = 'runtime';
+
+}
+
+
+
 docker {
 
     String buildName = jar.getProperties()['baseName'].toString().toLowerCase()
     String buildVersion = jar.getProperties()['version']
 
-    System.out.println("Docker is using version " +buildVersion);
-
-    // Although this is specified within the Docker file, the gradle plugin states it as a mandatory field.
-    // Docker file will override this
-    String dockerNameAndVersion = buildName + "/" +buildVersion
-    name  dockerNameAndVersion
+    String imageName = "mjevans" + "/" +buildName
+    System.out.println("Creating image is " +imageName + " with tags 'latest' and "+buildVersion);
+    name imageName
 
     String executablesToPackage = "build/libs/"+buildName+"-"+buildVersion + ".jar"
     files executablesToPackage

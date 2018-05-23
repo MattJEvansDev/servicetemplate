@@ -1,0 +1,47 @@
+{
+   "apiVersion":"apps/v1",
+   "kind":"Deployment",
+   "metadata":{
+      "name":"servicetemplate",
+       "labels":{
+       "app":"servicetemplate"
+       }
+   },
+   "spec":{
+     "replicas": 2,
+     "minReadySeconds":15,
+     "selector": {
+         "matchLabels": {
+         "app":"servicetemplate",
+         "visualize":"true"
+          }
+      }
+     ,
+     "template": {
+         "metadata": {
+             "labels": {
+             "app":"servicetemplate",
+             "visualize":"true",
+             "name":"servicetemplate"
+             }
+           
+          },
+          "spec": {
+              "containers":[ {
+                   "image":"mjevans/servicetemplate",
+                   "imagePullPolicy": "Never",
+                   "name": "servicetemplate",
+                   "env": [ {
+                     	"name":"EUREKA_URL",
+                        "value":"http://eureka:admin@eureka-lb:8761/eureka"
+                   }],
+                   "ports":[ {
+                       "containerPort":8083
+                   }]
+                 
+               }]
+          }
+     }
+      
+   }
+}

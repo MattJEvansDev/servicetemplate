@@ -15,16 +15,12 @@
  */
 package voteservice.clients;
 
-import feign.auth.BasicAuthRequestInterceptor;
-import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
-@Configuration
-public class WordServiceConfiguration {
+@Component
+public class WordServiceClientFallback implements WordServiceClient {
 
-    @Bean
-    public BasicAuthRequestInterceptor basicAuthRequestInterceptor() {
-        return new BasicAuthRequestInterceptor("admin", "password");
-    }
+            public String getRandomWord() {
+                return "Ohhh Noooooo, I've had to use my fallback service";
+            }
 }
